@@ -1,0 +1,189 @@
+---
+title: "code_markdown_simulation"
+author: "David"
+date: "2025-03-10"
+output: html_document
+---
+
+#Exercice d'analyse de données économiques avec R
+
+Contexte Vous êtes un analyste dans un institut de recherche économique. On vous a confié un jeu de données sur des indicateurs économiques de différents pays sur une période de 10 ans. Votre mission est d'analyser ces données, d'en extraire des tendances et de préparer un rapport synthétique.
+
+```{r}
+
+#Pour intégrer les librairies.
+
+library(dplyr)
+
+```
+
+### 1. Créons un jeu de données simulé avec les variables suivantes:
+
+-   pays (facteur): 10 pays différents
+-   annee (numérique): 2013-2022
+-   pib_per_capita (numérique): PIB par habitant en dollars
+-   taux_chomage (numérique): pourcentage de chômage
+-   inflation (numérique): taux d'inflation annuel
+-   dette_publique (numérique): pourcentage du PIB
+-   investissement_etranger (numérique): en millions de dollars
+-   region (facteur): continent ou région économique
+
+```{r}
+
+df <- data.frame(
+  pays = c("Senegal", "Rwanda", "Seychelles", "Togo", "Niger", "Côte d'Ivoire", "Burundi", "Ethiopie", "Danemark", "Corée du Sud"),
+  annee = rep(2013:2022, each = 10),
+  pib_per_capita = runif(100, 10, 30),
+  taux_chomage = runif(100, 0, 99),
+  inflation = runif(100, 0, 9),
+  dette_publique = runif(100, 0, 99)
+)
+
+head(df)
+```
+
+
+```{r}
+CEDEAO <- c("Senegal", "Côte d'Ivoire", "Niger", "Togo")
+
+df$zone_economique <- ifelse(df$pays %in% CEDEAO, "CEDEAO", NA)
+
+df
+  
+```
+
+
+### 2.1 Examinez la structure des données
+
+```{r}
+
+str(df)
+  
+```
+
+
+### 2.2 Vérifiez les valeurs manquantes
+
+```{r}
+#Le nombre de valeur manquantes dans le data frame
+sum(is.na(df))
+
+#Devoir: Identifiez précisément les valeurs manquantes.
+
+  
+```
+
+### 2.3 Remplacez les valeurs manquantes
+
+```{r}
+
+df$zone_economique[is.na(df$zone_economique)] <- "Autre"
+
+df
+
+  
+```
+
+
+
+### 2.4 Vérifiez les statistiques descriptives par année et pour chaque région
+
+```{r}
+stat_des_Autre
+```
+
+
+```{r}
+#On génère un dataframe qui contiendra les statistiques descriptives économiques d'ensemble de la partie de la CEDEAO présente dans la base de données.
+
+stat_des_CEDEAO <-  df |>
+  filter(zone_economique == "CEDEAO") |> 
+  group_by(annee) |> 
+  summarize(
+    moyenne_pib_per_capita = mean(pib_per_capita, na.rm = TRUE),
+    moyenne_inflation = mean(inflation, na.rm = TRUE),
+    moyenne_taux_chomage = mean(taux_chomage, na.rm = TRUE),
+    ecart_type_pib_per_capita = sd(pib_per_capita, na.rm = TRUE),
+    ecart_type_inflation = sd(inflation, na.rm = TRUE),
+    ecart_type_taux_chomage = sd(taux_chomage, na.rm = TRUE)
+  )
+
+  
+```
+
+```{r}
+#On génère un dataframe qui contiendra les statistiques descriptives économiques d'ensemble des autres pays présents dans la base de données.
+
+stat_des_Autre <-  df |>
+  filter(zone_economique == "Autre") |> 
+  group_by(annee) |> 
+  summarize(
+    moyenne_pib_per_capita = mean(pib_per_capita, na.rm = TRUE),
+    moyenne_inflation = mean(inflation, na.rm = TRUE),
+    moyenne_taux_chomage = mean(taux_chomage, na.rm = TRUE),
+    ecart_type_pib_per_capita = sd(pib_per_capita, na.rm = TRUE),
+    ecart_type_inflation = sd(inflation, na.rm = TRUE),
+    ecart_type_taux_chomage = sd(taux_chomage, na.rm = TRUE)
+  )
+  
+```
+
+
+
+
+#Interlude: Petite pause
+###Exportons les Dataframes.
+```{r}
+write.csv(df, "base_training.csv")
+
+```
+
+
+```{r}
+write.csv(stat_des_Autre, "Insight_Autres.csv")
+```
+
+```{r}
+write.csv(stat_des_CEDEAO, "Insight_CEDEAO.csv")
+```
+
+
+
+
+### 3.1 Créez une nouvelle variable indiquant si le pays connaît une "récession" \# (définie comme 2 années consécutives de baisse du PIB)
+
+
+
+### 3.2 Calculez la corrélation entre les différentes variables économiques
+
+
+
+### 3.3 Analysez l'évolution des indicateurs au fil du temps pour chaque région
+
+### 3.4 Calculez les moyennes mobiles sur 3 ans pour lisser les tendances
+
+### 5.1 Créez une matrice de corrélation visuelle
+
+### 5.2 Identifiez les pays ayant les meilleures et pires performances économiques
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+summary(cars)
+```
+
+## Including Plots
+
+```{r}
+plot(pressure)
+```
+
+## Including Plots
+
+```{r}
+plot(pressure)
+```
